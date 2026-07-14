@@ -493,6 +493,20 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   display:flex; align-items:center; justify-content:center;
   border-bottom: 1px solid var(--line);
   position:relative;
+  overflow:hidden;
+  border-radius: 4px;
+}
+.proj-thumb::after{
+  content:"";
+  position:absolute; inset:0;
+  background: rgba(27,26,24,0.3);
+  pointer-events:none;
+  z-index:1;
+}
+.proj-thumb img{
+  width:100%; height:100%;
+  object-fit:cover;
+  display:block;
 }
 .proj-thumb span{
   font-family: var(--font-mono);
