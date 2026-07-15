@@ -1,5 +1,22 @@
 // ── Mobile nav toggle ──
 document.addEventListener('DOMContentLoaded', function () {
+  // ── Toast ──
+  var toastContainer = document.createElement('div');
+  toastContainer.className = 'toast-container';
+  document.body.appendChild(toastContainer);
+
+  function showToast(message, type) {
+    var t = document.createElement('div');
+    t.className = 'toast ' + (type || 'info');
+    t.textContent = message;
+    toastContainer.appendChild(t);
+    requestAnimationFrame(function () { t.classList.add('show'); });
+    setTimeout(function () {
+      t.classList.remove('show');
+      setTimeout(function () { t.remove(); }, 400);
+    }, 4000);
+  }
+
   var toggle = document.querySelector('.nav-toggle');
   var links = document.querySelector('.nav-links');
   if (toggle && links) {
@@ -61,26 +78,38 @@ document.addEventListener('DOMContentLoaded', function () {
     counters.forEach(function (el) { counterObserver.observe(el); });
   }
 
-  // ── Contact form (FormSubmit) ──
+  // ── Contact form (Vercel serverless) ──
   var form = document.querySelector('#quote-form');
   if (form) {
-    var endpoint = 'https://formsubmit.co/ajax/thelightconstructioncompany@gmail.com';
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var btn = form.querySelector('button[type="submit"]');
       var original = btn.textContent;
       btn.textContent = 'Sending...';
       btn.disabled = true;
+
       var data = Object.fromEntries(new FormData(form).entries());
-      fetch(endpoint, {
+
+      fetch('/api/quote', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       })
-        .then(function (res) { if (!res.ok) throw new Error('Request failed'); return res.json(); })
-        .then(function () { btn.textContent = 'Request Sent ✓'; form.reset(); })
-        .catch(function () { btn.textContent = 'Could not send — try WhatsApp'; })
-        .finally(function () { setTimeout(function () { btn.textContent = original; btn.disabled = false; }, 3000); });
+        .then(function (res) { return res.json().then(function (body) { return { ok: res.ok, body: body }; }); })
+        .then(function (result) {
+          if (result.ok) {
+            showToast('Quote request sent successfully!', 'success');
+            form.reset();
+          } else {
+            showToast(result.body.message || 'Could not send — try WhatsApp', 'error');
+          }
+        })
+        .catch(function () {
+          showToast('Network error — please try again or use WhatsApp', 'error');
+        })
+        .finally(function () {
+          setTimeout(function () { btn.textContent = original; btn.disabled = false; }, 3000);
+        });
     });
   }
 

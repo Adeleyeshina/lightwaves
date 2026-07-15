@@ -653,7 +653,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   outline-offset: 1px;
   border-color: var(--safety);
 }
-.field textarea{ resize: vertical; min-height: 120px; }
+.field textarea{ resize: none; min-height: 120px; }
 @media (max-width: 880px){
   #quote-form .grid.grid-2{ grid-template-columns: 1fr; }
 }
@@ -709,3 +709,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .text-center{ text-align:center; }
 .reveal{ opacity:0; transform: translateY(18px); transition: opacity .5s ease, transform .5s ease; }
 .reveal.in{ opacity:1; transform:none; }
+
+/* Toast */
+.toast-container{ position:fixed; top:80px; right:24px; z-index:9999; display:flex; flex-direction:column; gap:10px; pointer-events:none; }
+.toast{ pointer-events:auto; padding:14px 22px; border-radius:6px; color:#fff; font-size:15px; line-height:1.4; max-width:380px; box-shadow:0 6px 20px rgba(0,0,0,.3); opacity:0; transform:translateX(40px); transition:opacity .35s ease, transform .35s ease; }
+.toast.show{ opacity:1; transform:translateX(0); }
+.toast.success{ background:#2e7d32; }
+.toast.error{ background:#c62828; }
+.toast.info{ background:var(--steel); }
